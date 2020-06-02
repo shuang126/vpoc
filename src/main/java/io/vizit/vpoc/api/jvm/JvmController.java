@@ -43,6 +43,7 @@ class HelloMessage {
 }
 @RestController
 public class JvmController {
+    public static final String TOPIC_GREETINGS = "/topic/jvm";
     private final KafkaClient kafkaClient;
     private final SimpMessageSendingOperations messagingTemplate;
 
@@ -55,12 +56,12 @@ public class JvmController {
     public String index() {
 //        kafkaClient.send("jvm", "init heap");
         Greeting greeting = new Greeting("Hello, init heap !");
-        messagingTemplate.convertAndSend("/topic/greetings", greeting);
+        messagingTemplate.convertAndSend(TOPIC_GREETINGS, greeting);
         return "Greetings from JVM PoC!";
     }
 
     @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
+    @SendTo(TOPIC_GREETINGS)
     public Greeting greeting(HelloMessage message) throws Exception {
         Thread.sleep(1000); // simulated delay
         return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
