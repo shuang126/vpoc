@@ -7,7 +7,7 @@ function connect() {
         console.log('Connected: ' + frame);
         let topic = '/topic/gc/new';
         stompClient.subscribe(topic, function (greeting) {
-            showGreeting(JSON.parse(greeting.body));
+            showNewObjects(JSON.parse(greeting.body));
         });
     });
 }
@@ -23,8 +23,14 @@ function sendName() {
     stompClient.send("/app/hello", {}, JSON.stringify({'name': $("#name").val()}));
 }
 
-function showGreeting(message) {
-    console.log('got: ' + message);
+function showNewObjects(objects) {
+    for (let i = 0; i < objects.length; i++) {
+        let obj = objects[i];
+        console.log('got: ' + obj);
+        setTimeout(function () {
+            eden_space.allocate_one_obj(obj.size);
+        }, 100 * i);
+    }
 }
 
 $(function () {

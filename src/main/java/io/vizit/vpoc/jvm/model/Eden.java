@@ -1,18 +1,20 @@
 package io.vizit.vpoc.jvm.model;
 
-
 import lombok.Getter;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @Getter
-public class Eden {
-
-    private final long capacity;
-
-    public synchronized ObjectBO allocate(long id, int size) {
-        return new ObjectBO(id, size);
-    }
+public class Eden extends Space {
 
     public Eden(long capacity) {
-        this.capacity = capacity;
+        super(capacity);
+    }
+
+    public void mark() {
+        int count = ThreadLocalRandom.current().nextInt(1, 5);
+        for (int i = 0; i < count; i++) {
+            liveObjects.add(allocatedObjects.pollFirst());
+        }
     }
 }

@@ -1,6 +1,5 @@
 package io.vizit.vpoc.jvm.api;
 
-import com.google.gson.Gson;
 import io.vizit.vpoc.jvm.model.Heap;
 import io.vizit.vpoc.jvm.model.ObjectBO;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
