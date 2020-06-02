@@ -5,9 +5,9 @@ function connect() {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
-        let topic = '/topic/jvm';
+        let topic = '/topic/gc/new';
         stompClient.subscribe(topic, function (greeting) {
-            showGreeting(JSON.parse(greeting.body).content);
+            showGreeting(JSON.parse(greeting.body));
         });
     });
 }
@@ -24,11 +24,11 @@ function sendName() {
 }
 
 function showGreeting(message) {
-    console.log('Connected: ' + message);
+    console.log('got: ' + message);
 }
 
 $(function () {
     connect();
     init_heap();
-    new_objects();
+    // new_objects();
 });

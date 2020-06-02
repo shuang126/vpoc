@@ -1,4 +1,4 @@
-package io.vizit.vpoc.api.jvm;
+package io.vizit.vpoc.jvm.api;
 import io.vizit.vpoc.mq.KafkaClient;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
