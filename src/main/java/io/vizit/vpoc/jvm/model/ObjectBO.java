@@ -1,5 +1,6 @@
 package io.vizit.vpoc.jvm.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,14 +8,11 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class ObjectBO {
     private long id;
     private int size;
-
-    public ObjectBO(long id, int size) {
-        this.id = id;
-        this.size = size;
-    }
+    private long address;
 
     @Override
     public boolean equals(Object o) {

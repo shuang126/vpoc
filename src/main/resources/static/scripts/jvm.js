@@ -6,28 +6,22 @@ function connect() {
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/gc/new', function (data) {
-            showNewObject(JSON.parse(data.body));
+            console.log('showNewObject: ' + data.body);
+            eden_space.allocate_one_obj(JSON.parse(data.body));
         });
         stompClient.subscribe('/topic/gc/mark', function (data) {
-            mark(JSON.parse(data.body));
+            console.log('mark: ' + data.body);
+            eden_space.mark(JSON.parse(data.body));
         });
         stompClient.subscribe('/topic/gc/copy', function (data) {
-            showNewObject(JSON.parse(data.body));
+            console.log('copy: ' + data.body);
+            eden_space.copy(JSON.parse(data.body));
         });
         stompClient.subscribe('/topic/gc/sweep', function (data) {
-            showNewObject(JSON.parse(data.body));
+            console.log('sweep: ' + data.body);
+            eden_space.sweep(JSON.parse(data.body));
         });
     });
-}
-
-function showNewObject(obj) {
-    console.log('showNewObject: ' + obj);
-    eden_space.allocate_one_obj(obj.size);
-}
-
-function mark(obj) {
-    console.log('mark: ' + obj);
-    eden_space.mark(obj.id);
 }
 
 function disconnect() {

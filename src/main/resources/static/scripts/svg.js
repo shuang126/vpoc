@@ -52,19 +52,19 @@ let eden_space = {
             obj.select('text').attr({'font-size': 100, x: 15, y: 35, opacity: value});
         }, 500, mina.bounce);
     },
-    copy: function () {
+    copy: function (c) {
+        let from = c.from;
+        let to = c.to;
+        let obj_id = c.objectBO.id;
+        let address = c.address;
         let s = Snap(`#s${this.to_s}`);
-        let offset_x = 0;
-        let offset_y = 2;
-        for (let i = 0; i < 3; i++) {
-            let obj = Snap(`#obj-${this.lives[i]}`).clone().attr({id: `copy-obj-${this.lives[i]}`});
-            s.add(obj);
-            obj.animate({transform: `translate(${offset_x} ${offset_y})`}, 1000, mina.linear);
-            offset_x += obj.select('rect').getBBox().width;
-            console.log(`offset: ${offset_x}`)
-        }
+        let offset_x = address * obj_state.width;
+        let offset_y = 1;
+        let obj = Snap(`#obj-${obj_id}`).clone().attr({id: `copy-obj-${obj_id}`});
+        s.add(obj);
+        obj.animate({transform: `translate(${offset_x} ${offset_y})`}, 1000, mina.linear);
     },
-    sweep: function () {
+    sweep: function (s) {
 
     },
     move_pointer: function (width) {
@@ -93,7 +93,8 @@ let eden_space = {
             .addClass("obj_new");
         obj_g.text(cut_width / 2, obj_state.height / 2 + 5, this.next_obj_id);
     },
-    allocate_one_obj: function (obj_size) {
+    allocate_one_obj: function (obj) {
+        let obj_size = obj.size;
         console.log(`eden_space before allocate_one_obj: ${JSON.stringify(eden_space)}`);
         let cut_width = obj_state.width * obj_size;
         if (this.current_x + cut_width > this.width) { // width overflow

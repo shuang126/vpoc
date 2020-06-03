@@ -36,7 +36,7 @@ class EdenTest {
     void treeMap() {
         PriorityQueue<ObjectBO> allocatedObjects = new PriorityQueue<>(Comparator.comparing(ObjectBO::getSize));
         for (int i = 1; i < 50; i++) {
-            ObjectBO e = new ObjectBO(i, 50-i);
+            ObjectBO e = new ObjectBO(i, 50-i, 1);
             assertTrue(allocatedObjects.add(e));
         }
     }

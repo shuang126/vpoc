@@ -19,7 +19,9 @@ public class Young {
     public Young(Eden eden, Survivor from, Survivor to, SimpMessageSendingOperations messagingTemplate, Monitor monitor) {
         this.eden = eden;
         this.from = from;
+        this.from.setName(SpaceEnum.S0);
         this.to = to;
+        this.to.setName(SpaceEnum.S1);
         this.monitor = monitor;
     }
 
@@ -40,12 +42,14 @@ public class Young {
     private void copyAndSweep() {
         // copy from eden to <TO Survivor>
         for (ObjectBO objectBO : this.eden.getLiveObjects()) {
+            monitor.copy(new Copy(SpaceEnum.EDEN, this.to.getName(), objectBO, this.to.getAllocatedPointer().get()));
             this.to.allocate(objectBO.getId(), objectBO.getSize());
         }
         this.eden.sweep();
 
         // copy from <FROM Survivor> to <TO Survivor>
         for (ObjectBO objectBO : this.from.getLiveObjects()) {
+            monitor.copy(new Copy(this.from.getName(), this.to.getName(), objectBO, this.to.getAllocatedPointer().get()));
             this.to.allocate(objectBO.getId(), objectBO.getSize());
         }
         this.from.sweep();
