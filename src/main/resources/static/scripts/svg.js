@@ -4,7 +4,7 @@ let gc_config = {
 }
 let colors = ["yellow", "red", "pink", "green", "blue"]
 
-let obj_state = {
+let obj_space = {
     width: 80,
     height: 40,
     get area() {
@@ -34,7 +34,7 @@ let eden_space = {
         return this.width * this.height;
     },
     get eden_capacity() {
-        return this.area / obj_state.area
+        return this.area / obj_space.area
     },
     get find_live_obj() {
         return Math.floor(Math.random() * (this.next_obj_id - this.start_obj_id)) + this.start_obj_id;
@@ -58,7 +58,7 @@ let eden_space = {
         let obj_id = c.objectBO.id;
         let address = c.address;
         let s = Snap(`#s${this.to_s}`);
-        let offset_x = address * obj_state.width;
+        let offset_x = address * obj_space.width;
         let offset_y = 1;
         let obj = Snap(`#obj-${obj_id}`).clone().attr({id: `copy-obj-${obj_id}`});
         s.add(obj);
@@ -67,57 +67,31 @@ let eden_space = {
     sweep: function (s) {
 
     },
-    move_pointer: function (width) {
-        this.current_x += width;
-        if (this.current_x == this.width) {// next row
-            this.current_x = 0;
-            this.current_y += obj_state.height;
-        }
-    },
-    draw: function (cut_width) {
+    allocate_one_obj: function (obj) {
         setTimeout(function () {
             new_dot.attr({cx: 500, cy: 80});
             new_dot.animate({cx: 500, cy: 150}, 100, mina.linear);
         }, 10);
+
+        let obj_pointer = obj.address * obj_space.width;
+        let x_offset = obj_pointer % eden_space.width;
+        let y_offset = Math.floor(obj_pointer / eden_space.width) * obj_space.height;
+        let obj_id = obj.id;
+        let obj_width = obj.size * obj_space.width;
+
         let eden = Snap('#eden');
         let obj_g = eden.g().attr({
-            id: `obj-${this.next_obj_id}`,
-            transform: `translate(${this.current_x}, ${this.current_y})`
+            id: `obj-${obj_id}`,
+            transform: `translate(${x_offset}, ${y_offset})`
         });
-        obj_g.rect(0, 0, cut_width, obj_state.height)
+        obj_g.rect(0, 0, obj_width, obj_space.height)
             .attr({
                 fill: colors[Math.floor(Math.random() * 5)],
                 stroke: "gray",
-                "stroke-width": 2,
+                "stroke-width": 1,
             })
             .addClass("obj_new");
-        obj_g.text(cut_width / 2, obj_state.height / 2 + 5, this.next_obj_id);
-    },
-    allocate_one_obj: function (obj) {
-        let obj_size = obj.size;
-        console.log(`eden_space before allocate_one_obj: ${JSON.stringify(eden_space)}`);
-        let cut_width = obj_state.width * obj_size;
-        if (this.current_x + cut_width > this.width) { // width overflow
-            cut_width = this.width - this.current_x; // cut
-        }
-        let obj_id = this.next_obj_id;
-        this.draw(cut_width);
-        this.move_pointer(cut_width);
-        this.allocated += cut_width / obj_state.width;
-
-        this.next_obj_id++;
-
-        console.log(`eden_space after allocate_one_obj: ${JSON.stringify(eden_space)}`);
-        return obj_id;
-    },
-    minor_gc: function () {
-        console.log(`eden_space before gc: ${JSON.stringify(eden_space)}`);
-        this.mark();
-        this.copy();
-        this.switch_survivor();
-        this.move_start_obj_id();
-        this.allocated = 0;
-        console.log(`eden_space after gc: ${JSON.stringify(eden_space)}`);
+        obj_g.text(obj_width / 2, obj_space.height / 2 + 5, obj_id);
     }
 }
 
@@ -148,16 +122,4 @@ function init_heap() {
 
     let old_g = Snap('#old');
     old_g.rect(0, 0, old.width, old.height).addClass('old');
-}
-
-function new_objects() {
-    let obj_count = 58;
-    while (obj_count > 0) {
-        let obj_size = Math.ceil(Math.random() * 2);
-        setTimeout(function () {
-            eden_space.allocate_one_obj(obj_size);
-        }, 100 * obj_count);
-
-        obj_count--;
-    }
 }
