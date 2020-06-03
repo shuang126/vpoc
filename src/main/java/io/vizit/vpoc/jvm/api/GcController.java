@@ -1,9 +1,7 @@
 package io.vizit.vpoc.jvm.api;
 
-import io.vizit.vpoc.jvm.Monitor;
 import io.vizit.vpoc.jvm.model.Heap;
 import io.vizit.vpoc.jvm.model.ObjectBO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +32,6 @@ public class GcController {
             ObjectBO objectBO = heap.allocate(size);
             objects.add(objectBO);
         }
-        messagingTemplate.convertAndSend(Monitor.TOPIC_GC_NEW, objects);
         return objects;
     }
 }

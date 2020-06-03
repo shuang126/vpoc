@@ -1,9 +1,9 @@
 package io.vizit.vpoc.jvm.model;
 
+import io.vizit.vpoc.jvm.Monitor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Scope;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.TreeSet;
@@ -18,10 +18,10 @@ public class Survivor {
     protected long capacity = JvmConfig.getSurvivorSize();
     protected TreeSet<ObjectBO> allocatedObjects = new TreeSet<>();
     protected TreeSet<ObjectBO> liveObjects = new TreeSet<>();
-    private final SimpMessageSendingOperations messagingTemplate;
+    private final Monitor monitor;
 
-    public Survivor(SimpMessageSendingOperations messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
+    public Survivor(Monitor monitor) {
+        this.monitor = monitor;
     }
 
     public synchronized ObjectBO allocate(long id, int size) {

@@ -1,5 +1,6 @@
 package io.vizit.vpoc.jvm.model;
 
+import io.vizit.vpoc.jvm.Monitor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -15,12 +16,12 @@ public class Heap {
     private final Young young;
     private final Old old;
     private AtomicLong sequence = new AtomicLong(1);
-    private final SimpMessageSendingOperations messagingTemplate;
+    private final Monitor monitor;
 
-    public Heap(Young young, Old old, SimpMessageSendingOperations messagingTemplate) {
+    public Heap(Young young, Old old, SimpMessageSendingOperations messagingTemplate, Monitor monitor) {
         this.young = young;
         this.old = old;
-        this.messagingTemplate = messagingTemplate;
+        this.monitor = monitor;
     }
 
     public ObjectBO allocate(int size) {

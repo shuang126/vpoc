@@ -1,5 +1,6 @@
 package io.vizit.vpoc.jvm.model;
 
+import io.vizit.vpoc.jvm.Monitor;
 import lombok.Getter;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
@@ -10,18 +11,19 @@ import java.util.concurrent.ThreadLocalRandom;
 @Getter
 @Component
 public class Eden {
-    protected long capacity = JvmConfig.getEdenSize();
-    protected TreeSet<ObjectBO> allocatedObjects = new TreeSet<>();
-    protected TreeSet<ObjectBO> liveObjects = new TreeSet<>();
-    private final SimpMessageSendingOperations messagingTemplate;
+    private long capacity = JvmConfig.getEdenSize();
+    private TreeSet<ObjectBO> allocatedObjects = new TreeSet<>();
+    private TreeSet<ObjectBO> liveObjects = new TreeSet<>();
+    private final Monitor monitor;
 
-    public Eden(SimpMessageSendingOperations messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
+    public Eden(SimpMessageSendingOperations messagingTemplate, Monitor monitor) {
+        this.monitor = monitor;
     }
 
     public synchronized ObjectBO allocate(long id, int size) {
         ObjectBO objectBO = new ObjectBO(id, size);
         allocatedObjects.add(objectBO);
+        monitor.reportNewObject(objectBO);
         return objectBO;
     }
 

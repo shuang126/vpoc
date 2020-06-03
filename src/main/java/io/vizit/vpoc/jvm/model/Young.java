@@ -1,5 +1,6 @@
 package io.vizit.vpoc.jvm.model;
 
+import io.vizit.vpoc.jvm.Monitor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -13,13 +14,13 @@ public class Young {
     private final Eden eden;
     private Survivor from;
     private Survivor to;
-    private final SimpMessageSendingOperations messagingTemplate;
+    private final Monitor monitor;
 
-    public Young(Eden eden, Survivor from, Survivor to, SimpMessageSendingOperations messagingTemplate) {
+    public Young(Eden eden, Survivor from, Survivor to, SimpMessageSendingOperations messagingTemplate, Monitor monitor) {
         this.eden = eden;
         this.from = from;
         this.to = to;
-        this.messagingTemplate = messagingTemplate;
+        this.monitor = monitor;
     }
 
     public ObjectBO allocate(long id, int size) {
