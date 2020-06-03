@@ -2,20 +2,24 @@ package io.vizit.vpoc.jvm.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
+@Component
 public class Young {
-    private final long capacity;
-    private Eden eden;
+    private final long capacity = JvmConfig.getYoungSize();
+    private final Eden eden;
     private Survivor from;
     private Survivor to;
+    private final SimpMessageSendingOperations messagingTemplate;
 
-    public Young(long capacity) {
-        this.capacity = capacity;
-        this.eden = new Eden(this.capacity * JvmConfig.SurvivorRatio / (JvmConfig.SurvivorRatio + 2));
-        this.from = new Survivor((this.capacity - this.eden.getCapacity()) / 2);
-        this.to = new Survivor((this.capacity - this.eden.getCapacity()) / 2);
+    public Young(Eden eden, Survivor from, Survivor to, SimpMessageSendingOperations messagingTemplate) {
+        this.eden = eden;
+        this.from = from;
+        this.to = to;
+        this.messagingTemplate = messagingTemplate;
     }
 
     public ObjectBO allocate(long id, int size) {

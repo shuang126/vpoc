@@ -2,16 +2,41 @@ package io.vizit.vpoc.jvm.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.stereotype.Component;
 
+import java.util.TreeSet;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 @Setter
-public class Survivor extends Space {
+@Component
+@Scope("prototype")
+public class Survivor {
     private boolean empty = true;
+    protected long capacity = JvmConfig.getSurvivorSize();
+    protected TreeSet<ObjectBO> allocatedObjects = new TreeSet<>();
+    protected TreeSet<ObjectBO> liveObjects = new TreeSet<>();
+    private final SimpMessageSendingOperations messagingTemplate;
 
-    public Survivor(long capacity) {
-        super(capacity);
+    public Survivor(SimpMessageSendingOperations messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
+
+    public synchronized ObjectBO allocate(long id, int size) {
+        ObjectBO objectBO = new ObjectBO(id, size);
+        allocatedObjects.add(objectBO);
+        return objectBO;
+    }
+
+    public boolean available(int size) {
+        return allocatedObjects.size() + size < capacity;
+    }
+
+    public void sweep() {
+        allocatedObjects.clear();
+        liveObjects.clear();
     }
 
     public void mark() {

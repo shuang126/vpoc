@@ -1,7 +1,9 @@
 package io.vizit.vpoc.jvm.api;
 
+import io.vizit.vpoc.jvm.Monitor;
 import io.vizit.vpoc.jvm.model.Heap;
 import io.vizit.vpoc.jvm.model.ObjectBO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,12 +14,12 @@ import java.util.concurrent.ThreadLocalRandom;
 @RestController
 @RequestMapping(value = "/jvm/gc")
 public class GcController {
-    private static final String TOPIC_GC = "/topic/gc/new";
-    private Heap heap = Heap.getInstance();
+    private final Heap heap;
     private final SimpMessageSendingOperations messagingTemplate;
 
-    public GcController(SimpMessageSendingOperations messagingTemplate) {
+    public GcController(SimpMessageSendingOperations messagingTemplate, Heap heap) {
         this.messagingTemplate = messagingTemplate;
+        this.heap = heap;
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
@@ -32,7 +34,7 @@ public class GcController {
             ObjectBO objectBO = heap.allocate(size);
             objects.add(objectBO);
         }
-        messagingTemplate.convertAndSend(TOPIC_GC, objects);
+        messagingTemplate.convertAndSend(Monitor.TOPIC_GC_NEW, objects);
         return objects;
     }
 }
