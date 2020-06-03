@@ -45,20 +45,12 @@ let eden_space = {
     move_start_obj_id: function () {
         this.start_obj_id = this.next_obj_id;
     },
-    mark: function () {
-        this.lives = [];
-        for (let i = 0; i < 3; i++) { // pick 3 and mark as live object
-            let live_obj = this.find_live_obj;
-            this.lives.push(live_obj);
-            console.log(`${JSON.stringify(eden_space)}`)
-            setTimeout(function () {
-                let obj = Snap(`#obj-${live_obj}`);
-                obj.select('rect').animate({fill: 'white'}, 3000, mina.bounce);
-                Snap.animate(0, 1, function (value) {
-                    obj.select('text').attr({'font-size': 100, x: 15, y: 35, opacity: value});
-                }, 500, mina.bounce);
-            }, 1000 * i);
-        }
+    mark: function (live_obj_id) {
+        let obj = Snap(`#obj-${live_obj_id}`);
+        obj.select('rect').animate({fill: 'white'}, 3000, mina.bounce);
+        Snap.animate(0, 1, function (value) {
+            obj.select('text').attr({'font-size': 100, x: 15, y: 35, opacity: value});
+        }, 500, mina.bounce);
     },
     copy: function () {
         let s = Snap(`#s${this.to_s}`);
@@ -113,9 +105,7 @@ let eden_space = {
         this.allocated += cut_width / obj_state.width;
 
         this.next_obj_id++;
-        if (this.allocated >= this.eden_capacity) {
-            this.minor_gc();
-        }
+
         console.log(`eden_space after allocate_one_obj: ${JSON.stringify(eden_space)}`);
         return obj_id;
     },

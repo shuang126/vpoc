@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Getter
 @Setter
-public class ObjectBO implements Comparable<ObjectBO> {
+public class ObjectBO {
     private long id;
     private int size;
 
@@ -29,8 +29,4 @@ public class ObjectBO implements Comparable<ObjectBO> {
         return Objects.hash(id);
     }
 
-    @Override
-    public int compareTo(ObjectBO o) {
-        return this.size - o.size;
-    }
 }

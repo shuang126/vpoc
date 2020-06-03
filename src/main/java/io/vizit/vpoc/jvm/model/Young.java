@@ -24,7 +24,7 @@ public class Young {
     }
 
     public ObjectBO allocate(long id, int size) {
-        if (this.eden.available(size)) {
+        if (!this.eden.available(size)) {
             gc();
         }
         return this.eden.allocate(id, size);
