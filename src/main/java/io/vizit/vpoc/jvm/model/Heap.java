@@ -27,4 +27,10 @@ public class Heap {
     public ObjectBO allocate(int size) {
         return young.allocate(sequence.getAndIncrement(), size);
     }
+
+    public void clear() {
+        young.clear();
+        old.clear();
+        sequence = new AtomicLong(1);
+    }
 }

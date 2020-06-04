@@ -28,6 +28,9 @@ public class GcController {
     List<ObjectBO> newObject(@RequestBody NewRequest request) {
         List<ObjectBO> objects = new ArrayList<>();
         monitor.setDelay(request.getDelay());
+        if(request.isReset()) {
+            heap.clear();
+        }
         for (int i = 0; i < request.getCount(); i++) {
             int size = request.getSize();
             if (request.getRandomSizeMax() > 0) {

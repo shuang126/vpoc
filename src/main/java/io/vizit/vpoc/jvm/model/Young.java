@@ -61,4 +61,9 @@ public class Young {
         this.to = tmp;
     }
 
+    public void clear() {
+        this.eden.sweep();
+        this.from.sweep();
+        this.to.sweep();
+    }
 }

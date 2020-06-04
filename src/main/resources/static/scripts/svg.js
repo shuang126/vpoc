@@ -2,14 +2,18 @@ let gc_config = {
     SurvivorRatio: 8, // survivor:eden = 1:8
     NewRatio: 2 // young:old = 1:2
 }
-let colors = ["yellow", "red", "pink", "green", "blue"]
+let colors = [
+    "#a8e6cf", "#dcedc1", "#ffd3b6", "#ffaaa5",
+    "#ff3377", "#ee4035", "#f37736", "#fdf498",
+    "#7bc043", "#0392cf", "#8595a1", "#58668b",
+]
 
 let obj_space = {
     width: 80,
     height: 40
 }
 
-let new_dot = Snap('#heap').circle(500, 50, 10).attr(
+let new_dot = Snap('#heap').circle(500, 80, 10).attr(
     {
         stroke: "blue",
         "stroke-width": 3,
@@ -24,9 +28,9 @@ let eden_space = {
     mark: function (obj) {
         let obj_id = obj.id;
         let obj_g = Snap(`#obj-${obj_id}`);
-        obj_g.select('rect').animate({fill: 'white'}, 3000, mina.bounce);
+        obj_g.select('rect').animate({transform: 'scale(1.2)'}, 3000, mina.bounce);
         Snap.animate(0, 1, function (value) {
-            obj_g.select('text').attr({'font-size': 100, x: 15, y: 35, opacity: value});
+            obj_g.select('text').attr({'font-size': 30, opacity: value});
         }, 500, mina.bounce);
     },
     copy: function (c) {
@@ -47,7 +51,7 @@ let eden_space = {
     allocate_one_obj: function (obj) {
         setTimeout(function () {
             new_dot.attr({cx: 500, cy: 80});
-            new_dot.animate({cx: 500, cy: 150}, 100, mina.linear);
+            new_dot.animate({cx: 500, cy: 130}, 100, mina.linear);
         }, 10);
 
         let obj_pointer = obj.address * obj_space.width;
@@ -63,12 +67,12 @@ let eden_space = {
         });
         obj_g.rect(0, 0, obj_width, obj_space.height)
             .attr({
-                fill: colors[Math.floor(Math.random() * 5)],
+                fill: colors[Math.floor(Math.random() * 12)],
                 stroke: "gray",
                 "stroke-width": 1,
             })
             .addClass("obj_new");
-        obj_g.text(obj_width / 2, obj_space.height / 2 + 5, obj_id);
+        obj_g.text(obj_width / 2, obj_space.height / 2 + 5, obj_id).attr({'text-anchor': 'middle'});
     }
 }
 

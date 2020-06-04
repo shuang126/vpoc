@@ -1,16 +1,16 @@
 .eden {
-    fill: orange;
+    fill: #fff6e9;
     stroke: gray;
     stroke-width: 5;
 }
 .survivor {
-    fill: greenyellow;
+    fill: #d2e7ff;
     stroke: gray;
     stroke-width: 5;
 }
 
 .old {
-    fill: lightskyblue;
+    fill: #e4dcf1;
     stroke: gray;
     stroke-width: 5;
 }

@@ -13,4 +13,8 @@ public class Old {
     public Old(Monitor monitor) {
         this.monitor = monitor;
     }
+
+    public void clear() {
+
+    }
 }
