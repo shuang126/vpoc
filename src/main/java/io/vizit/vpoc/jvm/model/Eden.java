@@ -7,13 +7,14 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 @Getter
 @Component
 public class Eden {
-    private long capacity = JvmConfig.getEdenSize();
-    private AtomicLong allocatedPointer = new AtomicLong(0);
+    private int capacity = JvmConfig.getEdenSize();
+    private AtomicInteger allocatedPointer = new AtomicInteger(0);
     List<ObjectBO> allocatedObjects = new ArrayList<>();
     List<ObjectBO> liveObjects = new ArrayList<>();
     private final Monitor monitor;
@@ -42,13 +43,14 @@ public class Eden {
     }
 
     public void mark() {
-        int count = ThreadLocalRandom.current().nextInt(1, 5);
-        for (ObjectBO objectBO : allocatedObjects) {
+        IntStream ids = ThreadLocalRandom.current().ints(
+                3,
+                0,
+                allocatedObjects.size());
+        ids.forEach(i -> {
+            ObjectBO objectBO = allocatedObjects.get(i);
             liveObjects.add(objectBO);
             monitor.mark(objectBO);
-            if (count-- == 0) {
-                break;
-            }
-        }
+        });
     }
 }

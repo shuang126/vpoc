@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 @Getter
 @Setter
@@ -17,12 +18,13 @@ import java.util.concurrent.atomic.AtomicLong;
 @Scope("prototype")
 public class Survivor {
     private boolean empty = true;
-    protected long capacity = JvmConfig.getSurvivorSize();
-    private AtomicLong allocatedPointer = new AtomicLong(0);
+    protected int capacity = JvmConfig.getSurvivorSize();
+    private AtomicInteger allocatedPointer = new AtomicInteger(0);
     List<ObjectBO> allocatedObjects = new ArrayList<>();
     List<ObjectBO> liveObjects = new ArrayList<>();
     private final Monitor monitor;
     private SpaceEnum name;
+
     public Survivor(Monitor monitor) {
         this.monitor = monitor;
     }
@@ -46,13 +48,17 @@ public class Survivor {
     }
 
     public void mark() {
-        int count = ThreadLocalRandom.current().nextInt(1, 3);
-        for (ObjectBO objectBO : allocatedObjects) {
+        if (allocatedObjects.size() == 0) {
+            return;
+        }
+        IntStream ids = ThreadLocalRandom.current().ints(
+                1,
+                0,
+                allocatedObjects.size());
+        ids.forEach(i -> {
+            ObjectBO objectBO = allocatedObjects.get(i);
             liveObjects.add(objectBO);
             monitor.mark(objectBO);
-            if (count-- == 0) {
-                break;
-            }
-        }
+        });
     }
 }

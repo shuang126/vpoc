@@ -21,11 +21,12 @@ let eden_space = {
     width: 800,
     height: 320,
 
-    mark: function (live_obj_id) {
-        let obj = Snap(`#obj-${live_obj_id}`);
-        obj.select('rect').animate({fill: 'white'}, 3000, mina.bounce);
+    mark: function (obj) {
+        let obj_id = obj.id;
+        let obj_g = Snap(`#obj-${obj_id}`);
+        obj_g.select('rect').animate({fill: 'white'}, 3000, mina.bounce);
         Snap.animate(0, 1, function (value) {
-            obj.select('text').attr({'font-size': 100, x: 15, y: 35, opacity: value});
+            obj_g.select('text').attr({'font-size': 100, x: 15, y: 35, opacity: value});
         }, 500, mina.bounce);
     },
     copy: function (c) {
