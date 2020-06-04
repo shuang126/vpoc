@@ -31,7 +31,7 @@ public class Eden {
     }
 
     public boolean available(int size) {
-        return allocatedPointer.get() + size < capacity;
+        return allocatedPointer.get() + size <= capacity;
     }
 
     public void sweep() {

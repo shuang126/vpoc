@@ -19,18 +19,27 @@ public class Monitor {
     }
 
     public void reportNewObject(ObjectBO objectBO) {
-        messagingTemplate.convertAndSend(Monitor.TOPIC_GC_NEW, objectBO);
+        report(objectBO, TOPIC_GC_NEW);
     }
 
     public void mark(ObjectBO objectBO) {
-        messagingTemplate.convertAndSend(Monitor.TOPIC_GC_MARK, objectBO);
+        report(objectBO, TOPIC_GC_MARK);
     }
 
     public void copy(Copy copy) {
-        messagingTemplate.convertAndSend(Monitor.TOPIC_GC_COPY, copy);
+        report(copy, TOPIC_GC_COPY);
     }
 
-    public void sweep(Sweep objectBO) {
-        messagingTemplate.convertAndSend(Monitor.TOPIC_GC_SWEEP, objectBO);
+    public void sweep(Sweep sweep) {
+        report(sweep, TOPIC_GC_SWEEP);
+    }
+
+    private void report(Object object, String topic) {
+        try {
+            Thread.sleep(1000);
+            messagingTemplate.convertAndSend(topic, object);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

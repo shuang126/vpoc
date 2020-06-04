@@ -46,7 +46,7 @@ public class Survivor {
     }
 
     public void mark() {
-        int count = ThreadLocalRandom.current().nextInt(1, 5);
+        int count = ThreadLocalRandom.current().nextInt(1, 3);
         for (ObjectBO objectBO : allocatedObjects) {
             liveObjects.add(objectBO);
             monitor.mark(objectBO);

@@ -6,10 +6,7 @@ let colors = ["yellow", "red", "pink", "green", "blue"]
 
 let obj_space = {
     width: 80,
-    height: 40,
-    get area() {
-        return this.width * this.height;
-    }
+    height: 40
 }
 
 let new_dot = Snap('#heap').circle(500, 50, 10).attr(
@@ -21,30 +18,9 @@ let new_dot = Snap('#heap').circle(500, 50, 10).attr(
 );
 
 let eden_space = {
-    current_x: 0,
-    current_y: 0,
-    allocated: 0,
     width: 800,
     height: 320,
-    to_s: 0,
-    lives: [], // live object ids after marking
-    start_obj_id: 0, // 0 means empty
-    next_obj_id: 1, // obj id starts from 1
-    get area() {
-        return this.width * this.height;
-    },
-    get eden_capacity() {
-        return this.area / obj_space.area
-    },
-    get find_live_obj() {
-        return Math.floor(Math.random() * (this.next_obj_id - this.start_obj_id)) + this.start_obj_id;
-    },
-    switch_survivor: function () {
-        this.to_s = 1 - this.to_s;
-    },
-    move_start_obj_id: function () {
-        this.start_obj_id = this.next_obj_id;
-    },
+
     mark: function (live_obj_id) {
         let obj = Snap(`#obj-${live_obj_id}`);
         obj.select('rect').animate({fill: 'white'}, 3000, mina.bounce);
@@ -53,19 +29,19 @@ let eden_space = {
         }, 500, mina.bounce);
     },
     copy: function (c) {
-        let from = c.from;
-        let to = c.to;
+        let from = c.from.toLowerCase();
+        let to = c.to.toLowerCase();
         let obj_id = c.objectBO.id;
         let address = c.address;
-        let s = Snap(`#s${this.to_s}`);
         let offset_x = address * obj_space.width;
         let offset_y = 1;
-        let obj = Snap(`#obj-${obj_id}`).clone().attr({id: `copy-obj-${obj_id}`});
-        s.add(obj);
+        let obj = Snap(`#obj-${obj_id}`).clone().attr({id: `obj-${obj_id}`});
+        Snap(`#${to}`).add(obj);
         obj.animate({transform: `translate(${offset_x} ${offset_y})`}, 1000, mina.linear);
     },
     sweep: function (s) {
-
+        let space = s.space.toLowerCase();
+        Snap(`#${space}`).selectAll('g').remove();
     },
     allocate_one_obj: function (obj) {
         setTimeout(function () {
