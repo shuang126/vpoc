@@ -23,6 +23,10 @@ function connect() {
             console.log('sweep: ' + data.body);
             minor_gc.sweep(JSON.parse(data.body));
         });
+        stompClient.subscribe('/topic/gc/promotion', function (data) {
+            console.log('promotion: ' + data.body);
+            minor_gc.promotion(JSON.parse(data.body));
+        });
         stompClient.subscribe('/topic/supervisor/pause', function (data) {
             console.log('pause: ' + data.body);
             $("#debug_alert").text(data.body);

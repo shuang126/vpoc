@@ -5,6 +5,7 @@ public class JvmConfig {
     public static final int Xmx = Xms; // maximum heap size
     public static final int SurvivorRatio = 8; // survivor:eden = 1:8
     public static final int NewRatio = 2;// young:old = 1:2
+    public static final int MaxTenuringThreshold = 3;// default: 15
 
     public static final int getYoungSize() {
         return Xmx * 1 / (JvmConfig.NewRatio + 1);

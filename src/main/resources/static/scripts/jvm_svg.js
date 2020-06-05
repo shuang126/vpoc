@@ -79,6 +79,9 @@ export const minor_gc = {
     sweep: function (s) {
         let space = s.space.toLowerCase();
         Snap(`#${space}`).selectAll('g').remove();
+    },
+    promotion(c) {
+        this.copy(c);
     }
 }
 

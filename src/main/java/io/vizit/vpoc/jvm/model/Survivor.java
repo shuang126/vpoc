@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
+
+import static io.vizit.vpoc.jvm.model.JvmConfig.MaxTenuringThreshold;
 
 @Getter
 @Setter
@@ -25,19 +25,25 @@ public class Survivor {
     List<ObjectBO> liveObjects = new ArrayList<>();
     private final GcSupervisor gcSupervisor;
     private SpaceEnum name;
+    private final Old old;
 
-    public Survivor(GcSupervisor gcSupervisor) {
+    public Survivor(GcSupervisor gcSupervisor, Old old) {
         this.gcSupervisor = gcSupervisor;
+        this.old = old;
     }
 
     public synchronized ObjectBO copy(SpaceEnum from, ObjectBO objectBO) {
         ObjectBO copy = (ObjectBO) objectBO.clone();
-        copy.setAddress(allocatedPointer.get());
-        copy.increaseAge();
-        allocatedObjects.add(copy);
-        allocatedPointer.addAndGet(copy.getSize());
-        gcSupervisor.copy(new Copy(from, this.getName(), copy));
-        return objectBO;
+        if (copy.getAge() >= MaxTenuringThreshold) {
+            old.promotion(from, copy);
+        } else {
+            copy.setAddress(allocatedPointer.get());
+            copy.increaseAge();
+            allocatedObjects.add(copy);
+            allocatedPointer.addAndGet(copy.getSize());
+            gcSupervisor.copy(new Copy(from, this.getName(), copy));
+        }
+        return copy;
     }
 
     public boolean available(int size) {

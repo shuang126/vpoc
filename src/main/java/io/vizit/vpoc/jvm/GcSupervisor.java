@@ -21,6 +21,7 @@ public class GcSupervisor {
     public static final String TOPIC_GC_MARK = "/topic/gc/mark";
     public static final String TOPIC_GC_COPY = "/topic/gc/copy";
     public static final String TOPIC_GC_SWEEP = "/topic/gc/sweep";
+    public static final String TOPIC_GC_PROMOTION = "/topic/gc/promotion";
     public static final String TOPIC_SUPERVISOR_PAUSE = "/topic/supervisor/pause";
     private final SimpMessageSendingOperations messagingTemplate;
     private int delay = 1000;
@@ -61,8 +62,13 @@ public class GcSupervisor {
     }
 
     public void copy(Copy copy) {
-        debug(String.format("copy %s", copy.getObjectBO().getId()));
+        debug(String.format("copy %s", copy.getObjectBO()));
         report(copy, TOPIC_GC_COPY);
+    }
+
+    public void promotion(Copy copy) {
+        debug(String.format("promotion %s", copy.getObjectBO()));
+        report(copy, TOPIC_GC_PROMOTION);
     }
 
     public void sweep(Sweep sweep) {
