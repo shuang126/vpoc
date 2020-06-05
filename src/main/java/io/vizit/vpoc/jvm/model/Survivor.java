@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,10 +30,13 @@ public class Survivor {
         this.gcSupervisor = gcSupervisor;
     }
 
-    public synchronized ObjectBO allocate(long id, int size, int age) {
-        ObjectBO objectBO = new ObjectBO(id, size, allocatedPointer.get(), age);
-        allocatedObjects.add(objectBO);
-        allocatedPointer.addAndGet(objectBO.getSize());
+    public synchronized ObjectBO copy(SpaceEnum from, ObjectBO objectBO) {
+        ObjectBO copy = (ObjectBO) objectBO.clone();
+        copy.setAddress(allocatedPointer.get());
+        copy.increaseAge();
+        allocatedObjects.add(copy);
+        allocatedPointer.addAndGet(copy.getSize());
+        gcSupervisor.copy(new Copy(from, this.getName(), copy));
         return objectBO;
     }
 
@@ -50,14 +55,9 @@ public class Survivor {
         if (allocatedObjects.size() == 0) {
             return;
         }
-        IntStream ids = ThreadLocalRandom.current().ints(
-                1,
-                0,
-                allocatedObjects.size());
-        ids.forEach(i -> {
-            ObjectBO objectBO = allocatedObjects.get(i);
-            liveObjects.add(objectBO);
-            gcSupervisor.mark(objectBO);
-        });
+        Collections.sort(allocatedObjects, Comparator.comparing(ObjectBO::getAge).reversed());
+        ObjectBO objectBO = allocatedObjects.get(0);
+        liveObjects.add(objectBO);
+        gcSupervisor.mark(objectBO);
     }
 }

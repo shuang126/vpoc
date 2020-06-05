@@ -61,8 +61,9 @@ export const minor_gc = {
     copy: function (c) {
         let from = c.from.toLowerCase();
         let to = c.to.toLowerCase();
-        let obj_id = c.objectBO.id;
-        let address = c.address;
+        let obj = c.objectBO;
+        let obj_id = obj.id;
+        let address = obj.address;
         let offset_x = address * obj_space.width;
         let offset_y = 1;
         let obj_g = Snap(`#obj-${obj_id}`).clone().attr({id: `obj-${obj_id}`});
@@ -72,7 +73,7 @@ export const minor_gc = {
                 transform: `translate(${offset_x} ${offset_y})`
             },
             1000, mina.linear);
-        obj_g.select('text').attr({"font-size": 20});
+        obj_g.select('text').attr({"font-size": 20, "text": `${obj_id},${obj.age}`});
     },
 
     sweep: function (s) {

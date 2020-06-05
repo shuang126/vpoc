@@ -13,5 +13,4 @@ public class Copy {
     private SpaceEnum from;
     private SpaceEnum to;
     private ObjectBO objectBO;
-    private long address;
 }
