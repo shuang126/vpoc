@@ -28,8 +28,8 @@ public class Survivor {
         this.gcSupervisor = gcSupervisor;
     }
 
-    public synchronized ObjectBO allocate(long id, int size) {
-        ObjectBO objectBO = new ObjectBO(id, size, allocatedPointer.get());
+    public synchronized ObjectBO allocate(long id, int size, int age) {
+        ObjectBO objectBO = new ObjectBO(id, size, allocatedPointer.get(), age);
         allocatedObjects.add(objectBO);
         allocatedPointer.addAndGet(objectBO.getSize());
         return objectBO;

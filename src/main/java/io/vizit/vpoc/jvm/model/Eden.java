@@ -24,7 +24,7 @@ public class Eden {
     }
 
     public synchronized ObjectBO allocate(long id, int size) {
-        ObjectBO objectBO = new ObjectBO(id, size, allocatedPointer.get());
+        ObjectBO objectBO = new ObjectBO(id, size, allocatedPointer.get(), 0);
         allocatedObjects.add(objectBO);
         allocatedPointer.addAndGet(objectBO.getSize());
         gcSupervisor.reportNewObject(objectBO);

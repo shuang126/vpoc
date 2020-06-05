@@ -43,12 +43,12 @@ public class Young {
         // copy from eden to <TO Survivor>
         for (ObjectBO objectBO : this.eden.getLiveObjects()) {
             gcSupervisor.copy(new Copy(SpaceEnum.EDEN, this.to.getName(), objectBO, this.to.getAllocatedPointer().get()));
-            this.to.allocate(objectBO.getId(), objectBO.getSize());
+            this.to.allocate(objectBO.getId(), objectBO.getSize(), objectBO.getAge() + 1);
         }
         // copy from <FROM Survivor> to <TO Survivor>
         for (ObjectBO objectBO : this.from.getLiveObjects()) {
             gcSupervisor.copy(new Copy(this.from.getName(), this.to.getName(), objectBO, this.to.getAllocatedPointer().get()));
-            this.to.allocate(objectBO.getId(), objectBO.getSize());
+            this.to.allocate(objectBO.getId(), objectBO.getSize(), objectBO.getAge() + 1);
         }
 
         this.eden.sweep();
