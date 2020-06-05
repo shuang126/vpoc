@@ -3,12 +3,14 @@ package io.vizit.vpoc.jvm.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Objects;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
 public class ObjectBO {
     private long id;
     private int size;

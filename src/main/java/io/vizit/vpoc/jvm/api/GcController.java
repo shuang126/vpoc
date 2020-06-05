@@ -1,6 +1,6 @@
 package io.vizit.vpoc.jvm.api;
 
-import io.vizit.vpoc.jvm.Monitor;
+import io.vizit.vpoc.jvm.GcSupervisor;
 import io.vizit.vpoc.jvm.model.Heap;
 import io.vizit.vpoc.jvm.model.ObjectBO;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -14,23 +14,25 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequestMapping(value = "/jvm/gc")
 public class GcController {
     private final Heap heap;
-    private final Monitor monitor;
+    private final GcSupervisor gcSupervisor;
     private final SimpMessageSendingOperations messagingTemplate;
 
-    public GcController(SimpMessageSendingOperations messagingTemplate, Heap heap, Monitor monitor) {
+    public GcController(SimpMessageSendingOperations messagingTemplate, Heap heap, GcSupervisor gcSupervisor) {
         this.messagingTemplate = messagingTemplate;
         this.heap = heap;
-        this.monitor = monitor;
+        this.gcSupervisor = gcSupervisor;
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public @ResponseBody
     List<ObjectBO> newObject(@RequestBody NewRequest request) {
         List<ObjectBO> objects = new ArrayList<>();
-        monitor.setDelay(request.getDelay());
-        if(request.isReset()) {
+        gcSupervisor.setDelay(request.getDelay());
+        if (request.isReset()) {
             heap.clear();
         }
+        gcSupervisor.setDebug(request.isDebug());
+
         for (int i = 0; i < request.getCount(); i++) {
             int size = request.getSize();
             if (request.getRandomSizeMax() > 0) {
@@ -41,4 +43,24 @@ public class GcController {
         }
         return objects;
     }
+
+    @RequestMapping(value = "/debug/go", method = RequestMethod.POST)
+    public @ResponseBody
+    Boolean go() {
+        return gcSupervisor.go();
+    }
+
+    @RequestMapping(value = "/debug/step", method = RequestMethod.POST)
+    public @ResponseBody
+    Boolean step() {
+        return gcSupervisor.step();
+    }
+
+    @RequestMapping(value = "/debug/pause", method = RequestMethod.POST)
+    public @ResponseBody
+    Boolean pause() {
+        gcSupervisor.setDebug(true);
+        return true;
+    }
+
 }

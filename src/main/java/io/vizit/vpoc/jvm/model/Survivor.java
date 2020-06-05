@@ -1,6 +1,6 @@
 package io.vizit.vpoc.jvm.model;
 
-import io.vizit.vpoc.jvm.Monitor;
+import io.vizit.vpoc.jvm.GcSupervisor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Scope;
@@ -17,16 +17,15 @@ import java.util.stream.IntStream;
 @Component
 @Scope("prototype")
 public class Survivor {
-    private boolean empty = true;
     protected int capacity = JvmConfig.getSurvivorSize();
     private AtomicInteger allocatedPointer = new AtomicInteger(0);
     List<ObjectBO> allocatedObjects = new ArrayList<>();
     List<ObjectBO> liveObjects = new ArrayList<>();
-    private final Monitor monitor;
+    private final GcSupervisor gcSupervisor;
     private SpaceEnum name;
 
-    public Survivor(Monitor monitor) {
-        this.monitor = monitor;
+    public Survivor(GcSupervisor gcSupervisor) {
+        this.gcSupervisor = gcSupervisor;
     }
 
     public synchronized ObjectBO allocate(long id, int size) {
@@ -44,7 +43,7 @@ public class Survivor {
         allocatedObjects.clear();
         liveObjects.clear();
         allocatedPointer.set(0);
-        monitor.sweep(new Sweep(this.name));
+        gcSupervisor.sweep(new Sweep(this.name));
     }
 
     public void mark() {
@@ -58,7 +57,7 @@ public class Survivor {
         ids.forEach(i -> {
             ObjectBO objectBO = allocatedObjects.get(i);
             liveObjects.add(objectBO);
-            monitor.mark(objectBO);
+            gcSupervisor.mark(objectBO);
         });
     }
 }

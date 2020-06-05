@@ -21,7 +21,16 @@ function connect() {
             console.log('sweep: ' + data.body);
             eden_space.sweep(JSON.parse(data.body));
         });
+        stompClient.subscribe('/topic/supervisor/pause', function (data) {
+            console.log('pause: ' + data.body);
+            pause(JSON.parse(data.body));
+        });
     });
+}
+
+let debug_alert = "#debug_alert";
+function pause(obj) {
+    $(debug_alert).text(obj.msg);
 }
 
 function disconnect() {
@@ -38,5 +47,4 @@ function sendName() {
 $(function () {
     connect();
     init_heap();
-    // new_objects();
 });

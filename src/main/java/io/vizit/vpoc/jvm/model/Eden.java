@@ -1,6 +1,6 @@
 package io.vizit.vpoc.jvm.model;
 
-import io.vizit.vpoc.jvm.Monitor;
+import io.vizit.vpoc.jvm.GcSupervisor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
@@ -17,17 +17,17 @@ public class Eden {
     private AtomicInteger allocatedPointer = new AtomicInteger(0);
     List<ObjectBO> allocatedObjects = new ArrayList<>();
     List<ObjectBO> liveObjects = new ArrayList<>();
-    private final Monitor monitor;
+    private final GcSupervisor gcSupervisor;
 
-    public Eden(Monitor monitor) {
-        this.monitor = monitor;
+    public Eden(GcSupervisor gcSupervisor) {
+        this.gcSupervisor = gcSupervisor;
     }
 
     public synchronized ObjectBO allocate(long id, int size) {
         ObjectBO objectBO = new ObjectBO(id, size, allocatedPointer.get());
         allocatedObjects.add(objectBO);
         allocatedPointer.addAndGet(objectBO.getSize());
-        monitor.reportNewObject(objectBO);
+        gcSupervisor.reportNewObject(objectBO);
         return objectBO;
     }
 
@@ -39,7 +39,7 @@ public class Eden {
         allocatedObjects.clear();
         liveObjects.clear();
         allocatedPointer.set(0);
-        monitor.sweep(new Sweep(SpaceEnum.EDEN));
+        gcSupervisor.sweep(new Sweep(SpaceEnum.EDEN));
     }
 
     public void mark() {
@@ -50,7 +50,7 @@ public class Eden {
         ids.forEach(i -> {
             ObjectBO objectBO = allocatedObjects.get(i);
             liveObjects.add(objectBO);
-            monitor.mark(objectBO);
+            gcSupervisor.mark(objectBO);
         });
     }
 }

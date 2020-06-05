@@ -15,4 +15,5 @@ public class NewRequest {
     private int randomSizeMax;
     private int delay = 100; // ms
     private boolean reset = false;
+    private boolean debug = false;
 }

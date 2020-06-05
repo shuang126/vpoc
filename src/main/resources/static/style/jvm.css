@@ -14,3 +14,7 @@
     stroke: gray;
     stroke-width: 5;
 }
+
+#debug_alert {
+    font-size: 32px;
+}

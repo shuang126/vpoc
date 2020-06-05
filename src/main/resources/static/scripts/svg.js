@@ -13,7 +13,7 @@ let obj_space = {
     height: 40
 }
 
-let new_dot = Snap('#heap').circle(500, 80, 10).attr(
+let new_dot = Snap('#heap').circle(600, 80, 10).attr(
     {
         stroke: "blue",
         "stroke-width": 3,
@@ -28,7 +28,13 @@ let eden_space = {
     mark: function (obj) {
         let obj_id = obj.id;
         let obj_g = Snap(`#obj-${obj_id}`);
-        obj_g.select('rect').animate({transform: 'scale(1.2)'}, 3000, mina.bounce);
+        obj_g.select('rect').animate({fill: 'white'},
+            3000, mina.bounce,
+            () => {
+                obj_g.select('rect').animate(
+                    {width: obj_space.width, height: obj_space.height},
+                    3000, mina.bounce);
+            });
         Snap.animate(0, 1, function (value) {
             obj_g.select('text').attr({'font-size': 30, opacity: value});
         }, 500, mina.bounce);
@@ -40,9 +46,14 @@ let eden_space = {
         let address = c.address;
         let offset_x = address * obj_space.width;
         let offset_y = 1;
-        let obj = Snap(`#obj-${obj_id}`).clone().attr({id: `obj-${obj_id}`});
-        Snap(`#${to}`).add(obj);
-        obj.animate({transform: `translate(${offset_x} ${offset_y})`}, 1000, mina.linear);
+        let obj_g = Snap(`#obj-${obj_id}`).clone().attr({id:`obj-${obj_id}`});
+        Snap(`#${to}`).add(obj_g);
+        obj_g.animate(
+            {
+                transform: `translate(${offset_x} ${offset_y})`
+            },
+            1000, mina.linear);
+        obj_g.select('text').attr({"font-size": 20});
     },
     sweep: function (s) {
         let space = s.space.toLowerCase();
@@ -50,8 +61,8 @@ let eden_space = {
     },
     allocate_one_obj: function (obj) {
         setTimeout(function () {
-            new_dot.attr({cx: 500, cy: 80});
-            new_dot.animate({cx: 500, cy: 130}, 100, mina.linear);
+            new_dot.attr({cx: 600, cy: 80});
+            new_dot.animate({cx: 600, cy: 130}, 100, mina.linear);
         }, 10);
 
         let obj_pointer = obj.address * obj_space.width;
@@ -72,7 +83,8 @@ let eden_space = {
                 "stroke-width": 1,
             })
             .addClass("obj_new");
-        obj_g.text(obj_width / 2, obj_space.height / 2 + 5, obj_id).attr({'text-anchor': 'middle'});
+        obj_g.text(obj_width / 2, obj_space.height / 2 + 5, obj_id)
+            .attr({'text-anchor': 'middle', "font-size": 20});
     }
 }
 

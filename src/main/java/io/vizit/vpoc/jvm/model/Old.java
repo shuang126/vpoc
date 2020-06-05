@@ -1,6 +1,6 @@
 package io.vizit.vpoc.jvm.model;
 
-import io.vizit.vpoc.jvm.Monitor;
+import io.vizit.vpoc.jvm.GcSupervisor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 @Getter
 public class Old {
     private final long capacity = JvmConfig.getOldSize();
-    private final Monitor monitor;
+    private final GcSupervisor gcSupervisor;
 
-    public Old(Monitor monitor) {
-        this.monitor = monitor;
+    public Old(GcSupervisor gcSupervisor) {
+        this.gcSupervisor = gcSupervisor;
     }
 
     public void clear() {

@@ -1,6 +1,6 @@
 package io.vizit.vpoc.jvm.model;
 
-import io.vizit.vpoc.jvm.Monitor;
+import io.vizit.vpoc.jvm.GcSupervisor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -14,15 +14,15 @@ public class Young {
     private final Eden eden;
     private Survivor from;
     private Survivor to;
-    private final Monitor monitor;
+    private final GcSupervisor gcSupervisor;
 
-    public Young(Eden eden, Survivor from, Survivor to, SimpMessageSendingOperations messagingTemplate, Monitor monitor) {
+    public Young(Eden eden, Survivor from, Survivor to, SimpMessageSendingOperations messagingTemplate, GcSupervisor gcSupervisor) {
         this.eden = eden;
         this.from = from;
         this.from.setName(SpaceEnum.S0);
         this.to = to;
         this.to.setName(SpaceEnum.S1);
-        this.monitor = monitor;
+        this.gcSupervisor = gcSupervisor;
     }
 
     public ObjectBO allocate(long id, int size) {
@@ -42,16 +42,16 @@ public class Young {
     private void copyAndSweep() {
         // copy from eden to <TO Survivor>
         for (ObjectBO objectBO : this.eden.getLiveObjects()) {
-            monitor.copy(new Copy(SpaceEnum.EDEN, this.to.getName(), objectBO, this.to.getAllocatedPointer().get()));
+            gcSupervisor.copy(new Copy(SpaceEnum.EDEN, this.to.getName(), objectBO, this.to.getAllocatedPointer().get()));
             this.to.allocate(objectBO.getId(), objectBO.getSize());
         }
-        this.eden.sweep();
-
         // copy from <FROM Survivor> to <TO Survivor>
         for (ObjectBO objectBO : this.from.getLiveObjects()) {
-            monitor.copy(new Copy(this.from.getName(), this.to.getName(), objectBO, this.to.getAllocatedPointer().get()));
+            gcSupervisor.copy(new Copy(this.from.getName(), this.to.getName(), objectBO, this.to.getAllocatedPointer().get()));
             this.to.allocate(objectBO.getId(), objectBO.getSize());
         }
+
+        this.eden.sweep();
         this.from.sweep();
     }
 

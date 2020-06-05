@@ -1,9 +1,8 @@
 package io.vizit.vpoc.jvm.model;
 
-import io.vizit.vpoc.jvm.Monitor;
+import io.vizit.vpoc.jvm.GcSupervisor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -12,16 +11,16 @@ import java.util.concurrent.atomic.AtomicLong;
 @Setter
 @Component
 public class Heap {
-    private long capacity = 240000;
+    private int capacity = 240000;
     private final Young young;
     private final Old old;
     private AtomicLong sequence = new AtomicLong(1);
-    private final Monitor monitor;
+    private final GcSupervisor gcSupervisor;
 
-    public Heap(Young young, Old old, SimpMessageSendingOperations messagingTemplate, Monitor monitor) {
+    public Heap(Young young, Old old, GcSupervisor gcSupervisor) {
         this.young = young;
         this.old = old;
-        this.monitor = monitor;
+        this.gcSupervisor = gcSupervisor;
     }
 
     public ObjectBO allocate(int size) {
@@ -33,4 +32,5 @@ public class Heap {
         old.clear();
         sequence = new AtomicLong(1);
     }
+
 }
