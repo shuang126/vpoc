@@ -1,3 +1,11 @@
+.title {
+    font-size: 32px;
+    font-family: "Andale Mono";
+}
+.sub_title {
+    font-size: 28px;
+    font-family: "Andale Mono";
+}
 .eden {
     fill: #fff6e9;
     stroke: gray;
@@ -8,7 +16,11 @@
     stroke: gray;
     stroke-width: 5;
 }
-
+.young {
+    fill: #dcedc1;
+    stroke: gray;
+    stroke-width: 1;
+}
 .old {
     fill: #e4dcf1;
     stroke: gray;

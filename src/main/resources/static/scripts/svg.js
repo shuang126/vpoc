@@ -36,7 +36,7 @@ let eden_space = {
                     3000, mina.bounce);
             });
         Snap.animate(0, 1, function (value) {
-            obj_g.select('text').attr({'font-size': 30, opacity: value});
+            obj_g.select('text').attr({'font-size': 50, opacity: value});
         }, 500, mina.bounce);
     },
     copy: function (c) {
@@ -46,7 +46,7 @@ let eden_space = {
         let address = c.address;
         let offset_x = address * obj_space.width;
         let offset_y = 1;
-        let obj_g = Snap(`#obj-${obj_id}`).clone().attr({id:`obj-${obj_id}`});
+        let obj_g = Snap(`#obj-${obj_id}`).clone().attr({id: `obj-${obj_id}`});
         Snap(`#${to}`).add(obj_g);
         obj_g.animate(
             {
@@ -104,15 +104,29 @@ let old = {
 }
 
 function init_heap() {
-    let young = Snap('#young');
-    let eden = young.g().attr({id: 'eden', transform: "translate(0 0)"});
-    eden.rect(0, 0, eden_space.width, eden_space.height).addClass('eden');
+    let young_g = Snap('#young');
+    young_g.rect(-10, -10, eden_space.width + 20, eden_space.height + survivor0.height * 2 + 60)
+        .addClass('young');
+    young_g.text(-120, 10, "年轻代").addClass('title');
+    young_g.text(-120, 50, "Young").addClass('title');
 
-    let s0_g = young.g().attr({id: 's0', transform: `translate(0 ${eden_space.height + 20})`});
+    let eden_g = young_g.g().attr({id: 'eden', transform: "translate(0 0)"});
+    eden_g.rect(0, 0, eden_space.width, eden_space.height).addClass('eden');
+    eden_g.text(-120, 160, "伊甸区").addClass('sub_title');
+    eden_g.text(-120, 200, "Eden").addClass('sub_title');
+
+    let s0_g = young_g.g().attr({id: 's0', transform: `translate(0 ${eden_space.height + 20})`});
     s0_g.rect(0, 0, survivor0.width, survivor0.height).addClass('survivor');
-    let s1_g = young.g().attr({id: 's1', transform: `translate(0 ${eden_space.height + 80})`});
+    s0_g.text(-140, 30, "存活区0").addClass('sub_title');
+    s0_g.text(-180, 30, "S0").addClass('sub_title');
+
+    let s1_g = young_g.g().attr({id: 's1', transform: `translate(0 ${eden_space.height + 80})`});
     s1_g.rect(0, 0, survivor1.width, survivor1.height).addClass('survivor');
+    s1_g.text(-140, 30, "存活区1").addClass('sub_title');
+    s1_g.text(-180, 30, "S1").addClass('sub_title');
 
     let old_g = Snap('#old');
     old_g.rect(0, 0, old.width, old.height).addClass('old');
+    old_g.text(-120, 100, "老年代").addClass('title');
+    old_g.text(-120, 160, "Old").addClass('title');
 }
