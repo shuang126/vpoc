@@ -5,10 +5,11 @@ import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 
 @Getter
 @Component
@@ -43,11 +44,12 @@ public class Eden {
     }
 
     public synchronized void mark() {
-        IntStream ids = ThreadLocalRandom.current().ints(
-                3,
-                0,
-                allocatedObjects.size());
-        ids.forEach(i -> {
+        Set<Integer> set = new HashSet<>();
+        while (set.size() < 3) {
+            int nextInt = ThreadLocalRandom.current().nextInt(allocatedObjects.size());
+            set.add(nextInt);
+        }
+        set.forEach(i -> {
             ObjectBO objectBO = allocatedObjects.get(i);
             liveObjects.add(objectBO);
             gcSupervisor.mark(objectBO);
