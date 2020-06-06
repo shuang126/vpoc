@@ -31,6 +31,7 @@ public class Heap {
         young.clear();
         old.clear();
         sequence = new AtomicLong(1);
+        gcSupervisor.go();
     }
 
 }

@@ -46,18 +46,18 @@ public class Survivor {
         return copy;
     }
 
-    public boolean available(int size) {
+    public synchronized boolean available(int size) {
         return allocatedPointer.get() + size < capacity;
     }
 
-    public void sweep() {
+    public synchronized void sweep() {
         allocatedObjects.clear();
         liveObjects.clear();
         allocatedPointer.set(0);
         gcSupervisor.sweep(new Sweep(this.name));
     }
 
-    public void mark() {
+    public synchronized void mark() {
         if (allocatedObjects.size() == 0) {
             return;
         }

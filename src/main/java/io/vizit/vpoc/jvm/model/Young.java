@@ -25,14 +25,14 @@ public class Young {
         this.gcSupervisor = gcSupervisor;
     }
 
-    public ObjectBO allocate(long id, int size) {
+    public synchronized ObjectBO allocate(long id, int size) {
         if (!this.eden.available(size)) {
             gc();
         }
         return this.eden.allocate(id, size);
     }
 
-    private synchronized void gc() {
+    private void gc() {
         eden.mark();
         from.mark();
         copyAndSweep();

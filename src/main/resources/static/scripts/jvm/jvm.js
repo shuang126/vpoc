@@ -1,4 +1,5 @@
-import {minor_gc, init_heap} from "./jvm_svg.js"
+import {minor_gc, init_heap} from "./jvm_svg.js";
+import {run, action} from "./jvm_controller.js";
 
 let stompClient = null;
 
@@ -44,15 +45,10 @@ function disconnect() {
 $(function () {
     connect();
     init_heap();
-    $("#run").click(() => {
-        let request = {
-            "size": 1,
-            "count": 1000,
-            "delay": 100,
-            "reset": true,
-            "debug": false
-        }
-        $.postJSON("/jvm/gc/new", request,
-            (data) => console.log("/jvm/gc/new: " + data));
-    });
+    $("#run").click(run.bind(null, false));
+    $("#debug").click(run.bind(null, true));
+
+    $("#go").click(action.bind(null, 'go'));
+    $("#step").click(action.bind(null, 'step'));
+    $("#pause").click(action.bind(null, 'pause'));
 });

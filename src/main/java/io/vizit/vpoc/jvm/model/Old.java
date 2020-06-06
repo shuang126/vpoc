@@ -21,14 +21,14 @@ public class Old {
         this.gcSupervisor = gcSupervisor;
     }
 
-    public void promotion(SpaceEnum from, ObjectBO copy) {
+    public synchronized void promotion(SpaceEnum from, ObjectBO copy) {
         copy.setAddress(allocatedPointer.get());
         allocatedObjects.add(copy);
         allocatedPointer.addAndGet(copy.getSize());
         gcSupervisor.promotion(new Copy(from, SpaceEnum.OLD, copy));
     }
 
-    public void clear() {
+    public synchronized void clear() {
 
     }
 }
