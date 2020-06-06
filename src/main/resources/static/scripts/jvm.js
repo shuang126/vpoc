@@ -41,11 +41,18 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function sendName() {
-    stompClient.send("/app/hello", {}, JSON.stringify({'name': $("#name").val()}));
-}
-
 $(function () {
     connect();
     init_heap();
+    $("#run").click(() => {
+        let request = {
+            "size": 1,
+            "count": 1000,
+            "delay": 100,
+            "reset": true,
+            "debug": false
+        }
+        $.postJSON("/jvm/gc/new", request,
+            (data) => console.log("/jvm/gc/new: " + data));
+    });
 });
