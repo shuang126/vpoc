@@ -19,9 +19,9 @@ mvn -N io.takari:maven:wrapper
 
 # 进行中的演示动画
 * JVM G1 垃圾回收算法
+* 红黑树
 
 # 计划中的演示动画
-* 红黑树
 * Kafka Offset
 * Java Classloader
 * Java Stack
