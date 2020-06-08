@@ -1,6 +1,16 @@
 # vpoc
 本项目是为了用动画来演示各种计算机技术原理。visualized prove of conception (vPoC). 
 
+# 启动程序
+## 启动服务
+```bash
+./mvnw spring-boot:run
+```
+
+## 如果需要，安装maven wrapper
+```bash
+mvn -N io.takari:maven:wrapper
+```
 # 已经完成的演示动画
 * JVM 年轻代的标记复制算法 
 
