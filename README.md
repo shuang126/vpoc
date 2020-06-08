@@ -4,7 +4,7 @@
 # 已经完成的演示动画
 * JVM 年轻代的标记复制算法 
 
-![动画演示视频](https://www.ixigua.com/pseries/6835238917629805067_6834743668876771843/)
+[动画演示视频](https://www.ixigua.com/pseries/6835238917629805067_6834743668876771843/)
 ![JVM 年轻代的标记复制算法](https://github.com/visualizit/vpoc/blob/master/snapshot/jvm_young_gc.png)
 
 # 进行中的演示动画
